@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Discord webhook Sender</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #000;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark {
+      background-color: #121212;
+      color: #eee;
+    }
+    input[type="text"] {
+      width: 400px;
+      padding: 8px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #000;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark input[type="text"] {
+      background-color: #333;
+      color: #eee;
+      border-color: #555;
+    }
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .dark-toggle-btn {
+      background-color: #6c757d;
+    }
+    .dark-toggle-btn:hover {
+      background-color: #5a6268;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Discord webhook Sender</h2>
+  <label>URL: <input type="text" id="webhookUrl" placeholder="WebhookのURLを入れて" /></label><br><br>
+  <label>メッセージ: <input type="text" id="message" placeholder="入力" /></label><br><br>
+  <button onclick="sendMessage()">送信</button>
+  <button class="dark-toggle-btn" onclick="toggleDarkMode()">ダークモード切り替え</button>
+  <p id="status"></p>
+
+  <script>
+    async function sendMessage() {
+      const url = document.getElementById('webhookUrl').value.trim();
+      const content = document.getElementById('message').value.trim();
+      const status = document.getElementById('status');
+      
+      if (!url || !content) {
+        status.textContent = 'Webhook URLとメッセージは両方入力して';
+        status.style.color = 'red';
+        return;
+      }
+      
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        if (res.ok) {
+          status.textContent = '送信完了しました';
+          status.style.color = 'green';
+        } else {
+          status.textContent = `送信失敗… ${res.status}`;
+          status.style.color = 'red';
+        }
+      } catch (error) {
+        status.textContent = 'Webhook URLを確認してください';
+        status.style.color = 'red';
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>
